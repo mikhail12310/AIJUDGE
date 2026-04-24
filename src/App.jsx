@@ -69,7 +69,7 @@ async function callGeminiText(promptArr, apiKey) {
 }
 
 export default function App() {
-  const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || "");
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const [jurisdiction, setJurisdiction] = useState("California, USA");
   const [disputeType, setDisputeType] = useState("Landlord-Tenant");
   const [viewMode, setViewMode] = useState("Party A");
@@ -239,10 +239,6 @@ export default function App() {
         </div>
 
         <div>
-          <div className="input-group">
-            <label>Gemini API Key</label>
-            <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Enter API Key" />
-          </div>
           <div className="input-group">
             <label>Jurisdiction</label>
             <input type="text" value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} />
