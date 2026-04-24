@@ -115,7 +115,7 @@ export default function App() {
   };
 
   const generatePreliminaryRuling = async () => {
-    if (!apiKey) { setError("Please provide your Gemini API Key."); return; }
+    if (!apiKey) { setError("System configuration error: API Key missing."); return; }
     setError("");
     setLoading("Analyzing stories and evidence...");
     try {
@@ -136,7 +136,7 @@ export default function App() {
   };
 
   const generateFinalRuling = async () => {
-    if (!apiKey) { setError("Please provide your Gemini API Key."); return; }
+    if (!apiKey) { setError("System configuration error: API Key missing."); return; }
     setError("");
     setLoading("Drafting Final Settlement Agreement...");
     try {
