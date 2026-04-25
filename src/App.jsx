@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { jsPDF } from "jspdf";
 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-const MODEL = "gemini-1.5-flash";
+const MODEL = "gemini-2.0-flash";
 
 const SYSTEM_PROMPT = `
 You are THE NEUTRAL. An advanced AI arbitrator platform designed for legal and mediation proceedings.
