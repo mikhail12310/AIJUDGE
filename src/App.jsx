@@ -541,9 +541,13 @@ export default function App() {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
+                <div style={{display: "flex", gap: "1rem", marginBottom: "1rem"}}>
+                  <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendChatMessage("Arbiter")} placeholder="Intervene or simulate chat..." />
+                </div>
                 <div style={{display: "flex", gap: "1rem", marginBottom: "2rem"}}>
-                  <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendChatMessage("Arbiter")} placeholder="Intervene in chat..." />
-                  <button className="btn btn-accent" style={{width: "auto"}} onClick={() => sendChatMessage("Arbiter")}>Warn/Intervene</button>
+                  <button className="btn btn-primary" style={{flex: 1}} onClick={() => sendChatMessage("Party A")}>Send as Party A</button>
+                  <button className="btn btn-accent" style={{flex: 1}} onClick={() => sendChatMessage("Party B")}>Send as Party B</button>
+                  <button className="btn btn-accent" style={{flex: 1, backgroundColor: "#6B7280"}} onClick={() => sendChatMessage("Arbiter")}>Arbiter Warning</button>
                 </div>
                 <button className="btn btn-primary" style={{width: "100%"}} onClick={generateFinalRuling}>End Chat & Generate Final Ruling</button>
               </div>
