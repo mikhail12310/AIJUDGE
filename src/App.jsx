@@ -123,7 +123,12 @@ export default function App() {
         `You are issuing a PRELIMINARY RULING for a ${disputeType} dispute in ${jurisdiction}.`,
         `Party A claims: ${partyAStory}`,
         `Party B claims: ${partyBStory}`,
-        `Analyze the text and any attached evidence. Provide a high-level summary of the dispute. Then provide a specific, separate preliminary assessment/feedback directed specifically to Party A, and a separate one directed to Party B. Note what evidence is strong or missing for each side. Provide output strictly in JSON matching the requested schema.`
+        `Analyze the text and any attached evidence. Provide the following in JSON format:
+        {
+          "summary": "A high-level summary of the dispute",
+          "party_a_assessment": "A specific assessment for Party A",
+          "party_b_assessment": "A specific assessment for Party B"
+        }`
       ];
       
       const jsonRes = await callGeminiJSON([...prompt, ...partyAEvidence, ...partyBEvidence], apiKey);
