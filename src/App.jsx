@@ -106,7 +106,36 @@ export default function App() {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
+    const lastMsg = chatHistory[chatHistory.length - 1];
+    if (lastMsg && lastMsg.role !== "Arbiter" && phase === 4 && apiKey) {
+      const timeout = setTimeout(() => {
+        autoIntervene();
+      }, 1500); // Small delay for natural feel
+      return () => clearTimeout(timeout);
+    }
   }, [chatHistory]);
+
+  const autoIntervene = async () => {
+    const transcript = chatHistory.slice(-5).map(m => `${m.role}: ${m.content}`).join("\n");
+    const prompt = [
+      `You are the Arbiter monitoring a live chat.`,
+      `Recent Transcript:\n${transcript}`,
+      `Task: Decide if you need to intervene. 
+      If the last message is aggressive, insulting (e.g., 'idiot'), or completely uncooperative, provide a short, firm warning. 
+      If the conversation is fine, reply with exactly the word "NONE".`,
+      `Output only the intervention text or "NONE".`
+    ];
+
+    try {
+      const res = await callGeminiText(prompt, apiKey);
+      if (res && res.trim().toUpperCase() !== "NONE") {
+        setChatHistory(prev => [...prev, { role: "Arbiter", content: res.trim() }]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleFileUpload = async (e, setter, currentEvidence) => {
     const files = Array.from(e.target.files);
@@ -547,7 +576,6 @@ export default function App() {
                 <div style={{display: "flex", gap: "1rem", marginBottom: "2rem"}}>
                   <button className="btn btn-primary" style={{flex: 1}} onClick={() => sendChatMessage("Party A")}>Send as Party A</button>
                   <button className="btn btn-accent" style={{flex: 1}} onClick={() => sendChatMessage("Party B")}>Send as Party B</button>
-                  <button className="btn btn-accent" style={{flex: 1, backgroundColor: "#6B7280"}} onClick={() => sendChatMessage("Arbiter")}>Arbiter Warning</button>
                 </div>
                 <button className="btn btn-primary" style={{width: "100%"}} onClick={generateFinalRuling}>End Chat & Generate Final Ruling</button>
               </div>
