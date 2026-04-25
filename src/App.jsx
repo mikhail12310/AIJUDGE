@@ -40,9 +40,14 @@ async function callGeminiJSON(promptArr, apiKey) {
     })
   });
 
-  if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(`API Error: ${errData.error?.message || res.statusText || "Unknown Error"}`);
+  }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+  // Remove markdown code blocks if present
+  text = text.replace(/```json/g, "").replace(/```/g, "").trim();
   return JSON.parse(text);
 }
 
@@ -63,7 +68,10 @@ async function callGeminiText(promptArr, apiKey) {
     })
   });
 
-  if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(`API Error: ${errData.error?.message || res.statusText || "Unknown Error"}`);
+  }
   const data = await res.json();
   return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
