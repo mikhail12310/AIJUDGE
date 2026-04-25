@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { jsPDF } from "jspdf";
 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-2.5-flash";
 
 const SYSTEM_PROMPT = `
 You are THE NEUTRAL. An advanced AI arbitrator platform designed for legal and mediation proceedings.
@@ -81,7 +81,7 @@ export default function App() {
   const [jurisdiction, setJurisdiction] = useState("California, USA");
   const [disputeType, setDisputeType] = useState("Landlord-Tenant");
   const [viewMode, setViewMode] = useState("Party A");
-  
+
   // Phase State: 1 (Intake), 2 (Prelim), 3 (Rebuttal), 4 (Chat), 5 (Final)
   const [phase, setPhase] = useState(1);
   const [loading, setLoading] = useState("");
@@ -105,7 +105,7 @@ export default function App() {
 
   const [chatHistory, setChatHistory] = useState([]); // { role, content }
   const [chatInput, setChatInput] = useState("");
-  
+
   const [finalRuling, setFinalRuling] = useState("");
 
   const chatEndRef = useRef(null);
@@ -167,7 +167,7 @@ export default function App() {
           "party_b_assessment": "A specific assessment for Party B"
         }`
       ];
-      
+
       const jsonRes = await callGeminiJSON([...prompt, ...partyAEvidence, ...partyBEvidence], apiKey);
       setPrelimRuling(jsonRes);
       setPhase(2);
@@ -208,16 +208,16 @@ export default function App() {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text("SETTLEMENT AGREEMENT & BINDING RESOLUTION", 105, 20, { align: "center" });
-    
+
     doc.setFontSize(12);
     doc.text(`Jurisdiction: ${jurisdiction} | Type: ${disputeType}`, 105, 28, { align: "center" });
-    
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    
+
     const lines = doc.splitTextToSize(finalRuling, 180);
     doc.text(lines, 15, 45);
-    
+
     const pageHeight = doc.internal.pageSize.height;
     let y = 45 + (lines.length * 5) + 20;
     if (y > pageHeight - 40) { doc.addPage(); y = 30; }
@@ -269,7 +269,7 @@ export default function App() {
       {loading && (
         <div className="loader-overlay">
           <div className="spinner"></div>
-          <h3 style={{color: "var(--color-primary)"}}>{loading}</h3>
+          <h3 style={{ color: "var(--color-primary)" }}>{loading}</h3>
         </div>
       )}
 
@@ -297,11 +297,11 @@ export default function App() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <label style={{marginBottom: "0.5rem", display: "block"}}>View Portal As:</label>
+          <label style={{ marginBottom: "0.5rem", display: "block" }}>View Portal As:</label>
           <div className="view-mode-group">
             {["Party A", "Party B", "Arbiter"].map(mode => (
-              <div 
-                key={mode} 
+              <div
+                key={mode}
                 className={`view-mode-option ${viewMode === mode ? "active" : ""}`}
                 onClick={() => setViewMode(mode)}
               >
@@ -312,7 +312,7 @@ export default function App() {
         </div>
 
         <div>
-          <h4 style={{marginBottom: "1rem", fontSize: "1rem"}}>Progress</h4>
+          <h4 style={{ marginBottom: "1rem", fontSize: "1rem" }}>Progress</h4>
           {renderPhaseTracker()}
         </div>
       </div>
@@ -324,8 +324,8 @@ export default function App() {
         {/* --- PARTY A PORTAL --- */}
         {viewMode === "Party A" && (
           <div className="portal">
-            <h1 style={{marginBottom: "2rem"}}>🟢 Party A Private Portal</h1>
-            
+            <h1 style={{ marginBottom: "2rem" }}>🟢 Party A Private Portal</h1>
+
             {phase === 1 && (
               <div className="card">
                 <h2 className="card-title">Initial Submission</h2>
@@ -333,7 +333,7 @@ export default function App() {
                   <div className="alert alert-success">Your statement and evidence have been submitted. Waiting for Party B.</div>
                 ) : (
                   <>
-                    <p style={{marginBottom: "1.5rem", color: "var(--color-text-muted)"}}>Please provide your complete narrative of the dispute and attach any relevant photographic evidence (JPG/PNG).</p>
+                    <p style={{ marginBottom: "1.5rem", color: "var(--color-text-muted)" }}>Please provide your complete narrative of the dispute and attach any relevant photographic evidence (JPG/PNG).</p>
                     <div className="input-group">
                       <label>Your Story & Claims</label>
                       <textarea value={partyAStory} onChange={e => setPartyAStory(e.target.value)} placeholder="State your facts clearly..." />
@@ -360,7 +360,7 @@ export default function App() {
                 </div>
 
                 {phase === 3 && (
-                  <div style={{marginTop: "2rem"}}>
+                  <div style={{ marginTop: "2rem" }}>
                     <h2 className="card-title">Rebuttal Phase</h2>
                     {aRebuttalSub ? (
                       <div className="alert alert-success">Your rebuttal is submitted.</div>
@@ -394,9 +394,9 @@ export default function App() {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-                <div style={{display: "flex", gap: "1rem"}}>
+                <div style={{ display: "flex", gap: "1rem" }}>
                   <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendChatMessage("Party A")} placeholder="Type a message..." />
-                  <button className="btn btn-primary" style={{width: "auto"}} onClick={() => sendChatMessage("Party A")}>Send</button>
+                  <button className="btn btn-primary" style={{ width: "auto" }} onClick={() => sendChatMessage("Party A")}>Send</button>
                 </div>
               </div>
             )}
@@ -404,8 +404,8 @@ export default function App() {
             {phase === 5 && (
               <div className="card">
                 <h2 className="card-title">Final Settlement Agreement</h2>
-                <div className="ruling-box" style={{borderColor: "var(--color-primary)", backgroundColor: "white"}}>
-                  <p style={{whiteSpace: "pre-wrap"}}>{finalRuling}</p>
+                <div className="ruling-box" style={{ borderColor: "var(--color-primary)", backgroundColor: "white" }}>
+                  <p style={{ whiteSpace: "pre-wrap" }}>{finalRuling}</p>
                 </div>
                 <button className="btn btn-primary" onClick={downloadPDF}>⬇️ Download PDF</button>
               </div>
@@ -416,8 +416,8 @@ export default function App() {
         {/* --- PARTY B PORTAL --- */}
         {viewMode === "Party B" && (
           <div className="portal">
-            <h1 style={{marginBottom: "2rem"}}>🔵 Party B Private Portal</h1>
-            
+            <h1 style={{ marginBottom: "2rem" }}>🔵 Party B Private Portal</h1>
+
             {phase === 1 && (
               <div className="card">
                 <h2 className="card-title">Initial Submission</h2>
@@ -425,7 +425,7 @@ export default function App() {
                   <div className="alert alert-success">Your statement and evidence have been submitted. Waiting for Party A.</div>
                 ) : (
                   <>
-                    <p style={{marginBottom: "1.5rem", color: "var(--color-text-muted)"}}>Please provide your complete narrative of the dispute and attach any relevant photographic evidence (JPG/PNG).</p>
+                    <p style={{ marginBottom: "1.5rem", color: "var(--color-text-muted)" }}>Please provide your complete narrative of the dispute and attach any relevant photographic evidence (JPG/PNG).</p>
                     <div className="input-group">
                       <label>Your Story & Counter-Claims</label>
                       <textarea value={partyBStory} onChange={e => setPartyBStory(e.target.value)} placeholder="State your facts clearly..." />
@@ -452,7 +452,7 @@ export default function App() {
                 </div>
 
                 {phase === 3 && (
-                  <div style={{marginTop: "2rem"}}>
+                  <div style={{ marginTop: "2rem" }}>
                     <h2 className="card-title">Rebuttal Phase</h2>
                     {bRebuttalSub ? (
                       <div className="alert alert-success">Your rebuttal is submitted.</div>
@@ -486,9 +486,9 @@ export default function App() {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-                <div style={{display: "flex", gap: "1rem"}}>
+                <div style={{ display: "flex", gap: "1rem" }}>
                   <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendChatMessage("Party B")} placeholder="Type a message..." />
-                  <button className="btn btn-primary" style={{width: "auto"}} onClick={() => sendChatMessage("Party B")}>Send</button>
+                  <button className="btn btn-primary" style={{ width: "auto" }} onClick={() => sendChatMessage("Party B")}>Send</button>
                 </div>
               </div>
             )}
@@ -496,8 +496,8 @@ export default function App() {
             {phase === 5 && (
               <div className="card">
                 <h2 className="card-title">Final Settlement Agreement</h2>
-                <div className="ruling-box" style={{borderColor: "var(--color-primary)", backgroundColor: "white"}}>
-                  <p style={{whiteSpace: "pre-wrap"}}>{finalRuling}</p>
+                <div className="ruling-box" style={{ borderColor: "var(--color-primary)", backgroundColor: "white" }}>
+                  <p style={{ whiteSpace: "pre-wrap" }}>{finalRuling}</p>
                 </div>
                 <button className="btn btn-primary" onClick={downloadPDF}>⬇️ Download PDF</button>
               </div>
@@ -508,22 +508,22 @@ export default function App() {
         {/* --- ARBITER PORTAL --- */}
         {viewMode === "Arbiter" && (
           <div className="portal">
-            <h1 style={{marginBottom: "2rem"}}>⚖️ The Arbiter's Chamber</h1>
+            <h1 style={{ marginBottom: "2rem" }}>⚖️ The Arbiter's Chamber</h1>
 
             {phase === 1 && (
               <div className="card">
                 <h2 className="card-title">Awaiting Intake Submissions</h2>
-                <div style={{display: "flex", gap: "2rem", marginBottom: "2rem"}}>
-                  <div style={{flex: 1, padding: "1.5rem", borderRadius: "8px", background: aSubmitted ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${aSubmitted ? "var(--color-border)" : "var(--color-accent)"}`}}>
-                    <h3 style={{fontSize: "1.2rem", marginBottom: "0.5rem"}}>Party A Status</h3>
-                    <p style={{fontWeight: 600, color: aSubmitted ? "#16A34A" : "var(--color-accent)"}}>{aSubmitted ? "✓ Submitted" : "⏳ Waiting"}</p>
+                <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem" }}>
+                  <div style={{ flex: 1, padding: "1.5rem", borderRadius: "8px", background: aSubmitted ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${aSubmitted ? "var(--color-border)" : "var(--color-accent)"}` }}>
+                    <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Party A Status</h3>
+                    <p style={{ fontWeight: 600, color: aSubmitted ? "#16A34A" : "var(--color-accent)" }}>{aSubmitted ? "✓ Submitted" : "⏳ Waiting"}</p>
                   </div>
-                  <div style={{flex: 1, padding: "1.5rem", borderRadius: "8px", background: bSubmitted ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${bSubmitted ? "var(--color-border)" : "var(--color-accent)"}`}}>
-                    <h3 style={{fontSize: "1.2rem", marginBottom: "0.5rem"}}>Party B Status</h3>
-                    <p style={{fontWeight: 600, color: bSubmitted ? "#16A34A" : "var(--color-accent)"}}>{bSubmitted ? "✓ Submitted" : "⏳ Waiting"}</p>
+                  <div style={{ flex: 1, padding: "1.5rem", borderRadius: "8px", background: bSubmitted ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${bSubmitted ? "var(--color-border)" : "var(--color-accent)"}` }}>
+                    <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Party B Status</h3>
+                    <p style={{ fontWeight: 600, color: bSubmitted ? "#16A34A" : "var(--color-accent)" }}>{bSubmitted ? "✓ Submitted" : "⏳ Waiting"}</p>
                   </div>
                 </div>
-                <button className="btn btn-accent" style={{width: "100%", padding: "1rem"}} disabled={!aSubmitted || !bSubmitted} onClick={generatePreliminaryRuling}>
+                <button className="btn btn-accent" style={{ width: "100%", padding: "1rem" }} disabled={!aSubmitted || !bSubmitted} onClick={generatePreliminaryRuling}>
                   Generate Preliminary Ruling
                 </button>
               </div>
@@ -547,19 +547,19 @@ export default function App() {
             {phase === 3 && (
               <div className="card">
                 <h2 className="card-title">Awaiting Rebuttals</h2>
-                <div style={{display: "flex", gap: "2rem", marginBottom: "2rem"}}>
-                  <div style={{flex: 1, padding: "1.5rem", borderRadius: "8px", background: aRebuttalSub ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${aRebuttalSub ? "var(--color-border)" : "var(--color-accent)"}`}}>
-                    <h3 style={{fontSize: "1.2rem", marginBottom: "0.5rem"}}>Party A Rebuttal</h3>
-                    <p style={{fontWeight: 600, color: aRebuttalSub ? "#16A34A" : "var(--color-accent)"}}>{aRebuttalSub ? "✓ Submitted" : "⏳ Waiting"}</p>
+                <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem" }}>
+                  <div style={{ flex: 1, padding: "1.5rem", borderRadius: "8px", background: aRebuttalSub ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${aRebuttalSub ? "var(--color-border)" : "var(--color-accent)"}` }}>
+                    <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Party A Rebuttal</h3>
+                    <p style={{ fontWeight: 600, color: aRebuttalSub ? "#16A34A" : "var(--color-accent)" }}>{aRebuttalSub ? "✓ Submitted" : "⏳ Waiting"}</p>
                   </div>
-                  <div style={{flex: 1, padding: "1.5rem", borderRadius: "8px", background: bRebuttalSub ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${bRebuttalSub ? "var(--color-border)" : "var(--color-accent)"}`}}>
-                    <h3 style={{fontSize: "1.2rem", marginBottom: "0.5rem"}}>Party B Rebuttal</h3>
-                    <p style={{fontWeight: 600, color: bRebuttalSub ? "#16A34A" : "var(--color-accent)"}}>{bRebuttalSub ? "✓ Submitted" : "⏳ Waiting"}</p>
+                  <div style={{ flex: 1, padding: "1.5rem", borderRadius: "8px", background: bRebuttalSub ? "var(--color-bg)" : "#FFFBEB", border: `1px solid ${bRebuttalSub ? "var(--color-border)" : "var(--color-accent)"}` }}>
+                    <h3 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Party B Rebuttal</h3>
+                    <p style={{ fontWeight: 600, color: bRebuttalSub ? "#16A34A" : "var(--color-accent)" }}>{bRebuttalSub ? "✓ Submitted" : "⏳ Waiting"}</p>
                   </div>
                 </div>
-                <button className="btn btn-accent" style={{width: "100%", padding: "1rem"}} disabled={!aRebuttalSub || !bRebuttalSub} onClick={() => {
+                <button className="btn btn-accent" style={{ width: "100%", padding: "1rem" }} disabled={!aRebuttalSub || !bRebuttalSub} onClick={() => {
                   setPhase(4);
-                  setChatHistory([{ role: "Arbiter", content: "I have reviewed your rebuttals and new evidence. You may now converse directly to negotiate a settlement before I render the Final Binding Ruling. Please remain respectful; I am monitoring this chat."}]);
+                  setChatHistory([{ role: "Arbiter", content: "I have reviewed your rebuttals and new evidence. You may now converse directly to negotiate a settlement before I render the Final Binding Ruling. Please remain respectful; I am monitoring this chat." }]);
                 }}>
                   Open Moderated Chat
                 </button>
@@ -578,22 +578,22 @@ export default function App() {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-                <div style={{display: "flex", gap: "1rem", marginBottom: "1rem"}}>
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
                   <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendChatMessage("Arbiter")} placeholder="Intervene or simulate chat..." />
                 </div>
-                <div style={{display: "flex", gap: "1rem", marginBottom: "2rem"}}>
-                  <button className="btn btn-primary" style={{flex: 1}} onClick={() => sendChatMessage("Party A")}>Send as Party A</button>
-                  <button className="btn btn-accent" style={{flex: 1}} onClick={() => sendChatMessage("Party B")}>Send as Party B</button>
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => sendChatMessage("Party A")}>Send as Party A</button>
+                  <button className="btn btn-accent" style={{ flex: 1 }} onClick={() => sendChatMessage("Party B")}>Send as Party B</button>
                 </div>
-                <button className="btn btn-primary" style={{width: "100%"}} onClick={generateFinalRuling}>End Chat & Generate Final Ruling</button>
+                <button className="btn btn-primary" style={{ width: "100%" }} onClick={generateFinalRuling}>End Chat & Generate Final Ruling</button>
               </div>
             )}
 
             {phase === 5 && (
               <div className="card">
                 <h2 className="card-title">Final Settlement Agreement Rendered</h2>
-                <div className="ruling-box" style={{borderColor: "var(--color-primary)", backgroundColor: "white"}}>
-                  <p style={{whiteSpace: "pre-wrap"}}>{finalRuling}</p>
+                <div className="ruling-box" style={{ borderColor: "var(--color-primary)", backgroundColor: "white" }}>
+                  <p style={{ whiteSpace: "pre-wrap" }}>{finalRuling}</p>
                 </div>
                 <button className="btn btn-primary" onClick={downloadPDF}>⬇️ Download PDF</button>
               </div>
